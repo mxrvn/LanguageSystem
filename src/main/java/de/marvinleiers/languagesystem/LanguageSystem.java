@@ -8,6 +8,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.scheduler.BukkitRunnable;
 
 import java.io.File;
 import java.util.HashMap;
@@ -47,20 +48,29 @@ public final class LanguageSystem extends JavaPlugin implements Listener
     @EventHandler
     public void onJoin(PlayerJoinEvent event)
     {
-        Player player = event.getPlayer();
-
-        SupportedLanguages language = SupportedLanguages.ENGLISH;
-
-        for (SupportedLanguages lang : SupportedLanguages.values())
+        new BukkitRunnable()
         {
-            if (lang.getLanguage().contains(player.getLocale()))
+            @Override
+            public void run()
             {
-                language = lang;
-                break;
-            }
-        }
+                Player player = event.getPlayer();
 
-        languagesHashMap.put(player, language);
+                SupportedLanguages language = SupportedLanguages.ENGLISH;
+
+                for (SupportedLanguages lang : SupportedLanguages.values())
+                {
+                    if (player.getLocale().contains(lang.getLanguage()))
+                    {
+                        language = lang;
+                        break;
+                    }
+                }
+
+                languagesHashMap.put(player, language);
+                player.sendMessage(getMessage(player, "welcome"));
+                System.out.println(player.getLocale() + " " + language.getLanguage());
+            }
+        }.runTaskLater(this, 5 * 20);
     }
 
     public static SupportedLanguages getPlayerLanguage(Player player)
