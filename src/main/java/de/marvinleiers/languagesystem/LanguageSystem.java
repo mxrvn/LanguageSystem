@@ -53,6 +53,7 @@ public final class LanguageSystem extends JavaPlugin implements Listener
         if (languagesHashMap.containsKey(player))
         {
             send(player, "welcome");
+            return;
         }
 
         new BukkitRunnable()
