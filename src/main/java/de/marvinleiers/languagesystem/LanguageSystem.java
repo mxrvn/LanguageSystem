@@ -48,13 +48,18 @@ public final class LanguageSystem extends JavaPlugin implements Listener
     @EventHandler
     public void onJoin(PlayerJoinEvent event)
     {
+        Player player = event.getPlayer();
+
+        if (languagesHashMap.containsKey(player))
+        {
+            send(player, "welcome");
+        }
+
         new BukkitRunnable()
         {
             @Override
             public void run()
             {
-                Player player = event.getPlayer();
-
                 SupportedLanguages language = SupportedLanguages.ENGLISH;
 
                 for (SupportedLanguages lang : SupportedLanguages.values())
@@ -67,10 +72,17 @@ public final class LanguageSystem extends JavaPlugin implements Listener
                 }
 
                 languagesHashMap.put(player, language);
-                player.sendMessage(getMessage(player, "welcome"));
-                System.out.println(player.getLocale() + " " + language.getLanguage());
+                send(player, "welcome");
             }
         }.runTaskLater(this, 5 * 20);
+    }
+
+    public static void send(Player player, String messageKey)
+    {
+        if (getMessage(player, messageKey) != null)
+        {
+            player.sendMessage(getMessage(player, messageKey));
+        }
     }
 
     public static SupportedLanguages getPlayerLanguage(Player player)
